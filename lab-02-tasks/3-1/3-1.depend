@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1563236456 source:/home/bogdanbuga/Desktop/[Laboratoare IOCLA]/lab-02-tasks/4-1/main.c
+	<stdio.h>
+	<stdlib.h>
+

@@ -1,0 +1,82 @@
+%include "io.inc"
+extern printf
+
+section .data
+    before_format db "Before:   %s", 13, 10, 0
+    after_format db "After:      %s", 13, 10, 0
+    mystring db "Ana are mere", 0
+
+section .text
+global CMAIN
+
+ROT13:
+    push ebp
+    mov ebp, esp
+
+    ; TODO
+    mov eax, [ebp + 8]
+    push eax    
+    
+    L1:
+        cmp byte [eax], 90
+        jle instr1
+        
+        cmp byte [eax], 97
+        jge instr2
+        
+        instr1: ; litera mare [65, 90]
+            cmp byte [eax], 65
+            jl NEXT
+            
+            cmp byte [eax], 78
+            jl PLUS
+            cmp byte [eax], 78
+            jge MINUS
+        
+        instr2: ; litera mica [97, 122]
+            cmp byte [eax], 122
+            jg NEXT
+            
+            cmp byte [eax], 110
+            jl PLUS
+            cmp byte [eax], 110
+            jge MINUS
+        
+        
+        PLUS:
+            add byte [eax], 13
+            jmp NEXT
+            
+        MINUS:
+            sub byte [eax], 13
+        
+        NEXT:
+            inc eax
+            cmp byte [eax], 0
+            jg L1
+            
+    pop eax
+    leave
+    ret
+
+CMAIN:
+    mov ebp, esp; for correct debugging
+    push ebp
+    mov ebp, esp
+
+    push mystring
+    push before_format
+    call printf
+    add esp, 8
+
+    push mystring
+    call ROT13
+    add esp, 4
+
+    push mystring
+    push after_format
+    call printf
+    add esp, 8
+
+    leave
+    ret

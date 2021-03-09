@@ -1,0 +1,63 @@
+IOCLA
+TEMA 2 - Steganografie
+Bogdan - Andrei Buga, 322CB
+
+TASK 1 : 
+int bruteforce_singlebyte_xor(int*)
+		Se aplica imaginii date ca parametru xor cu fiecare numar de la 0 la 
+	255, si se analizeaza toate elementele matricei corespunzatoare imaginii,
+	pana cand gasim mesajul "revient".
+		In cazul in care caracterul de pe pozitia curenta, impreuna cu 
+	urmatoarele 6 caractere, alcatuiesc cuvantul "revient", se salveaza toate
+	caracterele de pe linia corespunzatoare de la primul caracter de pe linie 
+	pana la primul caracter nul, apoi folosim registrul EAX astfel:
+			* In bitii din EAX \ AX, retinem cheia cu care am descoperit
+			mesajul;
+			* In AX, retinem linia pe care am gasit mesajul.
+			
+		Daca nu gasim "revient" pe linia curenta, analizam urmatoarea linie.
+	In caz contrar, reaplicam xor pe matrice cu cheia ce va fi returnata,
+	astfel "reparand" imaginea.
+		In functia main, dupa apelul functiei descrise mai sus, vom afisa in
+	consola mesajul obtinut si valorile obtinute pentru cheie si linie.
+	
+TASK 2:
+void predefined_xor(int* img)
+		Dupa ce obtinem linia si cheia corespunzatoare task-ului anterior,
+	aplicam xor pe matrice cu cheia respectiva, apoi inseram mesajul 
+	"C'est un proverbe francais" pe linia urmatoare. Ultimul pas presupune
+	calcularea unei noi chei in functie de cea initiala, cheie cu care vom
+	aplica xor pe imaginea rezultata, care va fi afisata.
+	
+TASK 3:
+void morse_encrypt(int* img, char* msg, int byte_id)
+		Luam fiecare caracter din msg si il criptam cu ajutorul codului Morse.
+	Criptarea rezultata va fi introdusa in img incepand de la indicele byte_id.
+	Vom pune spatiu dupa fiecare caracter, cu exceptia ultimului caracter,
+	caz in care vom pune caracterul nul.
+		Noua imagine va fi afisata.
+	
+TASK 4:
+void lsb_encode(int* img, char* msg, int byte_id)
+		Luam fiecare caracter din msg, inclusiv caracterul nul de la sfarsit,
+	si, plecand de la indicele byte_id, vom modifica fiecare LSB al elementelor
+	matricei in functie de bitii corespunzatori din msg. Daca bitii sunt egali,
+	se trece la urmatorul bit. In caz contrar, se aplica 
+	(element_curent_matrice) ^ 1. Dupa parcurgerea completa a lui msg,
+	vom afisa imaginea rezultata.
+	
+TASK 5:
+void lsb_decode(int* img, int byte_id)
+		Luam primele 8 elemente ale matricei img, incepand de la indicele
+	byte_id si asezam cei 8 LSB rezultati intr-un caracter care va fi afisat.
+	Acest procedeu continua pana cand ajungem la un set de 8 elemente
+	ale caror LSB alcatuiesc 0b 0000 0000 (adica 0).
+	
+TASK 6:
+void blur(int* img)
+		Copiem valorile initiale ale lui img intr-o matrice (care este, de 
+		fapt, vector) de dimensiuni egale alocata dinamic. Parcurgem 
+		toate elementele de forma img[i][j] (i intre 1 si height-1, j intre 1
+		si width-1), iar noua lor valoare va fi media aritmetica dintre 
+		valoarea "centrala" si cele 4 valori "vecine".
+		Matricea rezultata va fi afisata, apoi eliberata.

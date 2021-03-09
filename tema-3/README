@@ -1,0 +1,54 @@
+                                       TEMA 3 IOCLA
+                                 "Exploit ELFs, not elves"
+                                           de Bogdan - Andrei Buga
+	                                            grupa 322CB
+
+	        1) EXECUTABILUL "NICE"
+	Toate functiile folosite in "main" presupun: 
+		- alocarea pe stiva a unui spatiu de memorie de X octeti; 
+		- citirea din STDIN a Y octeti (Y < X). 
+	Singura functie care se abate de la aceasta regula este functia "sub_8048660" (a cincea 
+citire, cu adresa 0x08048660), unde: 
+		- se aloca pe stiva un spatiu de 231 (0xE7) de octeti; 
+		- se citesc 334 (0x14E) de octeti (aici, Y > X);
+		- se apeleaza functia reprezentata de valoarea de la adresa [ebp + 16]. 
+	Acest lucru presupune buffer overflow si pot exista situatii in care se citesc cel
+mult (231 + 15 =) 246 de caractere, caz in care nu putem accesa cum trebuie adresa dorita. De 
+aceea, acesata functie este vulnerabila. (Task 1)
+	
+	Pentru a genera un NICE_FLAG{} valid, se efectueaza primele 4 apeluri ale lui 
+read(0, esp, X) cu EXACT X OCTETI. La al 5-lea apel, citim 231 de octeti (pentru a ajunge din esp
+in ebp) + 16 octeti (pentru a ajunge din ebp in (ebp + 16)) + "\xb1\x85\x04\x08" (adresa functiei
+"print_flag" reprezentata in sistem "little endian"). Dupa apelul fucntiei "print_flag", se
+apeleaza exit(0), ceea ce duce la terminarea programului; de aceea, urmatoarele 5 citiri sunt 
+neglijabile.
+	Flag-ul generat de intrarea din fisierul "nice_payload" este:
+		NICE_FLAG{f641643cc953745858c3fa04aaac8f82}
+				(Task 2)
+
+
+		2) EXECUTABILUL "NAUGHTY"
+	Toate functiile folosite in "main" presupun:
+		- alocarea pe stiva a unui spatiu de memorie de X octeti; 
+		- citirea din STDIN a Y octeti (Y < X);
+		- verificarea egalitatii dintre un set de 4 octeti de pe pozitia Z si un numar 
+		fixat, unde ebp-Y < ebp-Z <= ebp-Y+X-4.
+ 	Singura functie care se abate de la aceasta regula este functia "sub_80486A9" (a cincea 
+citire, cu adresa 0x080486A9), unde: 
+		- se aloca pe stiva un spatiu de 484 (0x1E4) de octeti; 
+		- se citesc 577 (0x241) de octeti; 
+		- se cere egalitatea dintre setul de 4 caractere de la pozitia 227 fata de ebp si 
+		0xA5962CD0; 
+		- se apeleaza functia reprezentata de valoarea de la adresa [ebp + 12].
+
+	Pentru a genera un NAUGHTY_FLAG{} valid, se efectueaza primele 4 apeluri ale lui 
+read(0, esp, X) cu EXACT X OCTETI si egalitatile corespunzatoare valide. La al 5-lea apel, citim 
+257 de octeti (pentru a ajunge din esp in ebp - 227) + "\xd0\x2c\x96\xa5" (pentru respectarea 
+egalitatii cerute) + 223 de octeti (pentru a ajunge din ebp - 227 + 4 in ebp) + 12 octeti (pentru
+a ajunge din ebp in (ebp + 12)) + "\xb1\x85\x04\x08" (adresa functiei "print_flag" reprezentata
+in sistem "little endian"). Dupa apelul fucntiei "print_flag", se apeleaza exit(0), ceea ce duce
+la terminarea programului; de aceea, urmatoarele 5 citiri sunt neglijabile.
+	Flag-ul generat de intrarea din fisierul "naughty_payload" este:
+		NAUGHTY_FLAG{bf6c86e73fc91065403454bda96af8c0}
+				(Task 3)
+				
